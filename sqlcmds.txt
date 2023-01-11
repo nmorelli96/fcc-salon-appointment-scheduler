@@ -1,0 +1,56 @@
+CREATE DATABASE salon;
+CREATE TABLE customers();
+CREATE TABLE appointments();
+CREATE TABLE services();
+ALTER TABLE customers ADD COLUMN customer_id SERIAL PRIMARY KEY;
+ALTER TABLE appointments ADD COLUMN appointment_id SERIAL PRIMARY KEY;
+ALTER TABLE services ADD COLUMN service_id SERIAL PRIMARY KEY;
+ALTER TABLE appointments ADD COLUMN customer_id INT REFERENCES customers(customer_id);
+ALTER TABLE appointments ADD COLUMN service_id INT REFERENCES services(service_id);
+ALTER TABLE customers ADD COLUMN phone VARCHAR UNIQUE;
+ALTER TABLE customers ADD COLUMN name VARCHAR;
+ALTER TABLE services ADD COLUMN name VARCHAR;
+ALTER TABLE appointments ADD COLUMN time VARCHAR;
+
+
+Table "public.customers"
+   Column    |       Type        | Collation | Nullable |                    Default                     
+-------------+-------------------+-----------+----------+------------------------------------------------
+ customer_id | integer           |           | not null | nextval('customers_customer_id_seq'::regclass)
+ phone       | character varying |           |          | 
+ name        | character varying |           |          | 
+Indexes:
+    "customers_pkey" PRIMARY KEY, btree (customer_id)
+    "customers_phone_key" UNIQUE CONSTRAINT, btree (phone)
+Referenced by:
+    TABLE "appointments" CONSTRAINT "appointments_customer_id_fkey" FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+    
+
+Table "public.services"
+   Column   |       Type        | Collation | Nullable |                   Default                    
+------------+-------------------+-----------+----------+----------------------------------------------
+ service_id | integer           |           | not null | nextval('services_service_id_seq'::regclass)
+ name       | character varying |           |          | 
+Indexes:
+    "services_pkey" PRIMARY KEY, btree (service_id)
+Referenced by:
+    TABLE "appointments" CONSTRAINT "appointments_service_id_fkey" FOREIGN KEY (service_id) REFERENCES services(service_id)
+    
+    
+Table "public.appointments"
+     Column     |       Type        | Collation | Nullable |                       Default                        
+----------------+-------------------+-----------+----------+------------------------------------------------------
+ appointment_id | integer           |           | not null | nextval('appointments_appointment_id_seq'::regclass)
+ customer_id    | integer           |           |          | 
+ service_id     | integer           |           |          | 
+ time           | character varying |           |          | 
+Indexes:
+    "appointments_pkey" PRIMARY KEY, btree (appointment_id)
+Foreign-key constraints:
+    "appointments_customer_id_fkey" FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+    "appointments_service_id_fkey" FOREIGN KEY (service_id) REFERENCES services(service_id)
+    
+
+INSERT INTO services(name) VALUES('Haircut'), ('Colouring'), ('Permanent');
+
+chmod +x salon.sh
